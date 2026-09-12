@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-quer
 import { collection, getDocs, query } from "firebase/firestore";
 import "./App.css";
 import { firestoreDb } from "./firebase";
+import type { Court } from "./types/court.ts";
 import { type Location } from "./types/location.ts";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,26 @@ const fetchCourts = async () => {
   }
 
   return courts;
+};
+
+export type CourtProps = {
+  court: Court;
+};
+
+function Court(props: CourtProps) {
+  const { court } = props;
+  return (
+    <>
+      <h4>{court.name}</h4>
+      <p>
+        <span>backboard: {court.backboard}</span>,&nbsp;
+        <span>environment: {court.environment}</span>,&nbsp;
+        <span>ring: {court.ring}</span>,&nbsp;
+        <span>size: {court.size}</span>,&nbsp;
+        <span>surface: {court.surface}</span>
+      </p>
+    </>
+  );
 }
 
 function Courts() {
@@ -36,6 +57,13 @@ function Courts() {
         <li key={key}>
           <h3>{court.name}</h3>
           <p>{court.suburb}: {court.courts.length || 0} court(s)</p>
+          <ul>
+          {court.courts.map((court, key) => (
+            <li key={key}>
+              <Court court={court} />
+            </li>
+          ))}
+          </ul>
         </li>
       ))}
     </ul>
