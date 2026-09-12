@@ -8,7 +8,7 @@ import { type Location } from "./types/location.ts";
 const queryClient = new QueryClient();
 
 const fetchCourts = async () => {
-  const q = query(collection(firestoreDb, "courts"), orderBy("name"));
+  const q = query(collection(firestoreDb, "locations"), orderBy("name"));
   const courts: Location[] = [];
 
   try {
@@ -49,7 +49,7 @@ function Court(props: CourtProps) {
 }
 
 function Courts() {
-  const query = useQuery<Location[]>({ queryKey: ['courts'], queryFn: fetchCourts });
+  const query = useQuery<Location[]>({ queryKey: ['locations'], queryFn: fetchCourts });
 
   return (
     <ul>
