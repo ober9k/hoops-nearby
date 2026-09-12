@@ -6,13 +6,6 @@ export const Backboard = {
 
 export type BackboardType = typeof Backboard[keyof typeof Backboard];
 
-export const Court = {
-  HalfCourt: "HalfCourt",
-  FullCourt: "FullCourt",
-} as const;
-
-export type CourtType = typeof Court[keyof typeof Court];
-
 export const Environment = {
   Indoor:  "Indoor",
   Outdoor: "Outdoor",
@@ -27,6 +20,13 @@ export const Ring = {
 
 export type RingType = typeof Ring[keyof typeof Ring];
 
+export const Size = {
+  HalfCourt: "HalfCourt",
+  FullCourt: "FullCourt",
+} as const;
+
+export type SizeType = typeof Size[keyof typeof Size];
+
 export const Surface = {
   Bitumen:    "Bitumen",
   Concrete:   "Concrete",
@@ -37,10 +37,10 @@ export const Surface = {
 export type SurfaceType = typeof Surface[keyof typeof Surface];
 
 export type Court = {
-  name:            string,
-  backboardType:   BackboardType,
-  courtType:       CourtType,
-  environmentType: EnvironmentType,
-  ringType:        RingType,
-  surfaceType:     SurfaceType,
+  name:        string,
+  backboard:   BackboardType,
+  environment: EnvironmentType,
+  ring:        RingType,
+  size:        SizeType,
+  surface:     SurfaceType,
 };
