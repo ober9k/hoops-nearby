@@ -2,12 +2,13 @@ import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-quer
 import { collection, getDocs, query } from "firebase/firestore";
 import "./App.css";
 import { firestoreDb } from "./firebase";
+import { type Location } from "./types/location.ts";
 
 const queryClient = new QueryClient();
 
 const fetchCourts = async () => {
   const q = query(collection(firestoreDb, "courts"));
-  const courts = [];
+  const courts: Location[] = [];
 
   try {
     const qSnap = await getDocs(q);
@@ -15,7 +16,7 @@ const fetchCourts = async () => {
       return courts;
     }
     qSnap.forEach((doc) => {
-      courts.push({ ...doc.data(), id: doc.id });
+      courts.push({ ...doc.data(), id: doc.id } as Location);
     });
   }
   catch (error) {
@@ -27,14 +28,14 @@ const fetchCourts = async () => {
 }
 
 function Courts() {
-  const query = useQuery({ queryKey: ['courts'], queryFn: fetchCourts });
+  const query = useQuery<Location[]>({ queryKey: ['courts'], queryFn: fetchCourts });
 
   return (
     <ul>
       {query.data?.map((court, key) => (
         <li key={key}>
-          <h3>{court.location}</h3>
-          <p>{court.suburb}: {court.courts?.length || 0} court(s)</p>
+          <h3>{court.name}</h3>
+          <p>{court.suburb}: {court.courts.length || 0} court(s)</p>
         </li>
       ))}
     </ul>
