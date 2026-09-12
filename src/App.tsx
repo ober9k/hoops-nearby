@@ -1,40 +1,57 @@
-import { collection, onSnapshot, query } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { collection, getDocs, query } from "firebase/firestore";
 import "./App.css";
 import { firestoreDb } from "./firebase";
 
-function App() {
-  const [ courts, setCourts ] = useState<any[]>([]);
+const queryClient = new QueryClient();
 
-  useEffect(() => {
-    const q = query(collection(firestoreDb, "courts"));
+const fetchCourts = async () => {
+  const q = query(collection(firestoreDb, "courts"));
+  const courts = [];
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const courtsArray: any[] = [];
-      querySnapshot.forEach((doc) => {
-        courtsArray.push({ ...doc.data(), id: doc.id });
-      });
-      setCourts(courtsArray);
+  try {
+    const qSnap = await getDocs(q);
+    if (qSnap.empty) {
+      return courts;
+    }
+    qSnap.forEach((doc) => {
+      courts.push({ ...doc.data(), id: doc.id });
     });
+  }
+  catch (error) {
+    console.error("2:", error);
+    throw error; /* todo fix */
+  }
 
-    // Clean up the listener when the component unmounts
-    return () => unsubscribe();
-  });
+  return courts;
+}
+
+function Courts() {
+  const query = useQuery({ queryKey: ['courts'], queryFn: fetchCourts });
+
+  return (
+    <ul>
+      {query.data?.map((court, key) => (
+        <li key={key}>
+          <h3>{court.location}</h3>
+          <p>{court.suburb}: {court.courts?.length || 0} court(s)</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function App() {
 
   return (
     <>
-      <section>
-        <h2>Local Courts</h2>
-        <p>Hello World.</p>
-        <ul>
-          {courts.map((court, key) => (
-            <li key={key}>
-              <h3>{court.location}</h3>
-              <p>{court.suburb}: {court.courts?.length || 0} court(s)</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <QueryClientProvider client={queryClient}>
+        <section>
+          <h2>Local Courts</h2>
+          <p>Hello World.</p>
+          <Courts />
+        </section>
+      </QueryClientProvider>
     </>
   );
 }
