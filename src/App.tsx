@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import "./App.css";
 import { firestoreDb } from "./firebase";
 import type { Court } from "./types/court.ts";
@@ -8,7 +8,7 @@ import { type Location } from "./types/location.ts";
 const queryClient = new QueryClient();
 
 const fetchCourts = async () => {
-  const q = query(collection(firestoreDb, "courts"));
+  const q = query(collection(firestoreDb, "courts"), orderBy("name"));
   const courts: Location[] = [];
 
   try {
