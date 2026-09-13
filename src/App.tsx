@@ -4,6 +4,8 @@ import "./App.css";
 import { firestoreDb } from "./firebase";
 import type { Court } from "./types/court.ts";
 import { type Location } from "./types/location.ts";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { routeTree } from "./routes/routes.ts";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,13 @@ function Court(props: CourtProps) {
   );
 }
 
+const router = createRouter({
+  routeTree,
+  context: {
+    queryClient: new QueryClient()
+  },
+});
+
 function Courts() {
   const query = useQuery<Location[]>({ queryKey: ['locations'], queryFn: fetchCourts });
 
@@ -70,11 +79,36 @@ function Courts() {
   );
 }
 
+export function HomePage() {
+  return (
+    <>
+      <h1>Home</h1>
+    </>
+  );
+}
+
+export function LocationsPage() {
+  return (
+    <>
+      <h1>Locations</h1>
+    </>
+  );
+}
+
+export function ViewLocationPage() {
+  return (
+    <>
+      <h1>View Location</h1>
+    </>
+  );
+}
+
 function App() {
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
         <section>
           <h2>Local Courts</h2>
           <p>Hello World.</p>
